@@ -21,6 +21,7 @@ export default {
     return {
       cart: [],
       cartCount: 0,
+      cartLength: '',
     }
   },
   methods: {

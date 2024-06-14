@@ -32,7 +32,7 @@
                   class="btn rounded-0 text-white login nav-btn">Logout</button>
                 <div class="pt-2 postion-relative">
                   <router-link to="/view/cart"><span>&#128722;</span></router-link>
-                  <p id="cart-badge">{{cartCount}}</p>
+                  <p id="cart-badge">{{ cartCount }}</p>
                 </div>
               </div>
             </div>
@@ -48,7 +48,7 @@
 export default {
   name: 'Header',
   props: {
-      cartCount: 0,
+    cartCount: 0,
   },
   data() {
     return {

@@ -42,7 +42,7 @@ export default {
     getCartItem() {
       http.get('carts')
         .then((response) => {
-          console.log(response.data.carts);
+          console.log(response.data.carts[0]['cart_products'].length);
           this.cartDetails = response.data.carts[0]['cart_products'];
           this.cartDetails.forEach(cart => {
             this.getFetchProductData(cart.product_id);
