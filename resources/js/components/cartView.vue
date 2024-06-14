@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div v-if="loading">
+    <Loader/>
+  </div>
+  <div v-else>
     <b-container>
       <div id="cart">
-        <!-- {{ cartDetails }} -->
-        <!-- {{ productDetails }} -->
         <div v-for="( cartDetail, index ) in cartDetails" :key="index" class="mb-3">
           <div class="d-flex">
             <img :src="productDetails[index].productimages[0].url" alt="" height="250px">
@@ -25,14 +26,19 @@
 
 <script>
 import http from '../axios';
+import Loader from './loader.vue';
 
 export default {
   name: 'CartView',
+  components: {
+    Loader,
+  },
   props: ['cart'],
   data() {
     return {
       cartDetails: '',
       productDetails: [],
+      loading: true,
     }
   },
   mounted() {
@@ -46,6 +52,7 @@ export default {
           this.cartDetails = response.data.carts[0]['cart_products'];
           this.cartDetails.forEach(cart => {
             this.getFetchProductData(cart.product_id);
+            this.loading = false;
           })
         })
         .catch((error) => {
@@ -84,7 +91,8 @@ export default {
 <style scoped>
 #cart {
   height: 100vh;
-  border: 1px solid black;
+  margin: 20px 0;
+  border: 1px solid rgba(0, 0, 0, 0.356);
   padding: 2rem;
 }
 </style>
