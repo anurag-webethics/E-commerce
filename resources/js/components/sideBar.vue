@@ -1,24 +1,32 @@
 <template>
-
   <div id="sidebar">
     <h2 class="pt-3 ps-2">Category</h2>
     <div class="py-3">
       <form @submit.prevent="addCategory" class="d-flex justify-content-around">
-        <input type="text" name="name" v-model="name" placeholder="Add Category">
-        <b-button type="submit" name="submit" variant="success">Add</b-button>
+        <input type="text" name="name" v-model="$store.state.addCategoryName" placeholder="Add Category">
+        <div v-if="loading">
+          <b-button type="submit" name="submit" variant="success" disabled>Add</b-button>
+        </div>
+        <div v-else>
+          <b-button type="submit" name="submit" variant="success">Add</b-button>
+        </div>
       </form>
     </div>
-    <div v-if="loading" class="text-center">
-      <b-spinner label="Spinning"></b-spinner>
-    </div>
-    <div v-for="category in categories" :key="categories.id" class="d-flex justify-content-between" id="category">
-      {{ category.name }}
-      <span v-on:click="deleteCategory(category.id)">&#10060</span>
+    <div>
+      <div v-if="loading" class="text-center">
+        <b-spinner label="Spinning"></b-spinner>
+      </div>
+      <div v-else v-for="category in categories" :key="category.id" class="d-flex justify-content-between"
+        id="category">
+        <span @click="selectCategory(category)">{{ category.name }}</span>
+        <!-- <span @click="$store.dispatch('getProducts')">{{ category.name }}</span> -->
+        <!-- <span @click="setCategory(category.id)">{{ category.name }}</span> -->
+        <span v-on:click="deleteCategory(category.id)" class="text-dark"><b-icon-trash /></span>
+      </div>
     </div>
   </div>
 
 </template>
-
 
 <script>
 import http from '../axios';
@@ -27,7 +35,7 @@ export default {
   name: 'Sidebar',
   data() {
     return {
-      categories: '',
+      categories: [],
       name: '',
       loading: true,
     }
@@ -36,35 +44,55 @@ export default {
     this.getCategories();
   },
   methods: {
-    getCategories() {
-      http.get('categories')
-        .then((response) => {
-          this.categories = response.data;
-          this.loading = false;
-        })
-        .catch((error) => {
-          console.log(error);
-        })
+   async addCategory() {
+    await this.$store.dispatch('addCategory');
+      this.loading = true;
+      this.getCategories();
+      // setTimeout(() => {
+      //   this.getCategories();
+      // }, 2000)
     },
-    addCategory() {
-      http.post('categories', { name: this.name })
+    getCategories() {
+      http.get('view-categories')
         .then((response) => {
-          this.getCategories();
+          this.loading = false;
+          this.categories = response.data;
         })
         .catch((error) => {
           console.log(error);
         })
     },
     deleteCategory(id) {
-      if (confirm('Are you sure delete the category')) {
-        http.delete(`categories/${id}`)
-          .then((response) => {
-            this.getCategories();
-            console.log(response);
-          }).catch((error) => {
-            console.log(error);
-          })
-      }
+      this.$swal.fire({
+        title: "Are you sure?",
+        text: "you want to delete this category",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#36A745",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          http.delete(`categories/${id}`)
+            .then((response) => {
+              this.getCategories();
+              this.loading = true;
+            }).catch((error) => {
+              console.log(error);
+            })
+          this.$swal.fire({
+            title: "Deleted!",
+            text: "Your category has been deleted.",
+            icon: "success"
+          });
+        }
+      });
+    },
+    selectCategory(category) {
+      this.$emit('category-selected', category)
+    },
+    setCategory(category) {
+      return this.$store.commit('getProductCategoryId', category)
     }
   },
 }

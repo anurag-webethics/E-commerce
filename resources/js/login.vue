@@ -92,7 +92,9 @@ export default {
         .then((response) => {
           if (response.status == 200) {
             const token = response.data.user.token;
+            const userId = response.data.user.user.id;
             localStorage.setItem('authToken', token);
+            localStorage.setItem('userID', userId);
             this.$router.push('/');
           }
         })

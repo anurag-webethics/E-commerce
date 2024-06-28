@@ -1,8 +1,7 @@
-<!-- resources/js/app.vue -->
 <template>
   <div>
-    <Header cartCount=5></Header>
-    <router-view @increment="increment" @decrement="decrement" />
+    <Header :cartCount=cartLength :key="$route.fullPath" @data="getHomePath($event)"></Header>
+    <router-view @increment="increment()" @decrement="decrement()" :homePath="getPath" />
     <Footer></Footer>
   </div>
 </template>
@@ -10,6 +9,7 @@
 <script>
 import Header from './common/header.vue';
 import Footer from './common/footer.vue';
+import http from './axios';
 
 export default {
   name: 'Home',
@@ -19,20 +19,32 @@ export default {
   },
   data() {
     return {
-      cart: [],
-      cartCount: 0,
       cartLength: '',
+      getPath: '',
     }
+  },
+  mounted() {
+    this.getCartItem();
   },
   methods: {
     increment() {
-      this.cartCount++;
-      console.log(this.cartCount);
+      this.cartLength++;
     },
     decrement() {
-      this.cartCount--;
-      console.log(this.cartCount);
-    }
+      this.cartLength--;
+    },
+    getHomePath(title) {
+      this.getPath = title;
+    },
+    getCartItem() {
+      http.get('carts')
+        .then((response) => {
+          this.cartLength = response.data.carts[0]['cart_products'].length;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
   },
 };
 </script>

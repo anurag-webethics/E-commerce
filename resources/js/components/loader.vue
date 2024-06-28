@@ -12,7 +12,7 @@ export default {
 
 <style scoped>
 #loader{
-  height: 100vh;
+  height: 70vh;
   width: 100%;
   background-color: rgba(255, 255, 255, 0);
   z-index: 2;

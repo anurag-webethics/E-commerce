@@ -27,7 +27,6 @@ const routes = [
         path: "/profile/view",
         name: "profile",
         component: UserDetail,
-        // meta: { requiresAuth: true },
     },
     {
         path: "/profile/edit",
@@ -48,11 +47,17 @@ const routes = [
         path: "/product/view/:id",
         name: "product-view",
         component: ProductView,
+        meta: {
+            requireAuth: true,
+        },
     },
     {
         path: "/view/cart",
         name: "cart-view",
         component: CartView,
+        meta: {
+            requireAuth: true,
+        },
     },
 ];
 

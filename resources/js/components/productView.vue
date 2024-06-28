@@ -14,22 +14,23 @@
             </b-carousel>
           </div>
           <h4 class="pt-3">{{ productData.title }}</h4>
-          <p>Description:{{ productData.description }}</p>
+          <h5>Description:{{ productData.description }}</h5>
           <h5>Price:{{ productData.price }}</h5>
           <div class="d-flex">
-            <!-- <button v-on:click="decrement(number--)">-</button> -->
-            <input type="number" name="number" id="number" v-model="productAdd.products[0].quantity" style="width: 5%;"
-              class="text-center">
-            <!-- <button v-on:click="increment(number++)">+</button> -->
+            <h5>Quantity:</h5>
+            <b-form-select v-model="productAdd.products[0].quantity" :options="options" size="sm"
+              class="text-center mb-3" style="width: 5%;"></b-form-select>
           </div>
           <div class="pt-3">
-            <b-button variant="success" type="submit" @click="addToCartProduct">Add Cart</b-button>
+            <p v-if="isProductExist == true">Your product is already exist in cart</p>
+            <b-button variant="success" type="submit" @click="addToCartProduct()" v-else>Add to
+              Cart</b-button>
           </div>
         </div>
         <div style="width: 30%;" class="p-5">
           <div class="d-flex justify-content-between">
-            <h4>Price:</h4>
-            <p id="price">{{ priceUpdate }}</p>
+            <h4>Total price:</h4>
+            <p id="price">{{ productAdd.products[0].quantity * productData.price }}</p>
           </div>
           <hr>
         </div>
@@ -59,7 +60,6 @@ export default {
       slide: 0,
       sliding: null,
       loading: true,
-      priceUpdate: "",
       productAdd:
       {
         products: [
@@ -68,7 +68,16 @@ export default {
             quantity: 1,
           }
         ]
-      }
+      },
+      options: [
+        { value: 1, text: 1 },
+        { value: 2, text: 2 },
+        { value: 3, text: 3 },
+        { value: 4, text: 4 },
+        { value: 5, text: 5 },
+      ],
+      cartDetails: '',
+      isProductExist: false,
     }
   },
   mounted() {
@@ -76,13 +85,12 @@ export default {
   },
   methods: {
     getProduct() {
-      this.loading = true;
       http.get(`products/${this.$route.params.id}`)
         .then((repsonse) => {
-          console.log(repsonse.data.product);
+          this.getCartItem();
+          this.loading = false;
           this.productData = repsonse.data.product;
           this.priceUpdate = repsonse.data.product.price;
-          this.loading = false;
         }).catch((error) => {
           console.log(error);
         })
@@ -94,17 +102,30 @@ export default {
       this.sliding = false
     },
     addToCartProduct() {
-      let data = this.productAdd;
       http.post('carts', this.productAdd)
         .then((repsonse) => {
-          this.$emit('cart');
-          console.log(this.$emit('increment'));
+          this.getProduct();
+          this.$emit('increment');
         })
         .catch((error) => {
           console.log(error);
         })
     },
-
+    getCartItem() {
+      http.get('carts')
+        .then((response) => {
+          this.cartDetails = response.data.carts[0]['cart_products'];
+          if (this.cartDetails.some(obj => obj.product_id == this.productData.id)) {
+            this.isProductExist = true;
+          }
+          else {
+            this.isProductExist = false;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
   },
 }
 </script>
@@ -117,10 +138,10 @@ export default {
   overflow: hidden;
 }
 
-/* 
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-} */
+}
 </style>

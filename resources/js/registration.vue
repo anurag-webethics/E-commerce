@@ -25,7 +25,7 @@
                   id="userName" v-model="UserDetail.username" placeholder="User">
               </div>
               <span class="text-danger">
-                {{ UserRequestError.username ? UserRequestError.username[0] :''}}
+                {{ UserRequestError.username ? UserRequestError.username[0] : '' }}
               </span>
             </div>
 
@@ -194,9 +194,11 @@ export default {
   methods: {
     submitData() {
       http.post('signup', this.UserDetail)
-        .then((response) => { if(response.status == 200){
-          this.$router.push('/login');
-        } })
+        .then((response) => {
+          if (response.status == 200) {
+            this.$router.push('/login');
+          }
+        })
         .catch((error) => {
           let responseError = error.response.data.errors;
           this.UserRequestError = responseError;

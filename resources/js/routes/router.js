@@ -9,17 +9,17 @@ const router = new VueRouter({
     routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//     const token = localStorage.getItem("authToken");
-//     if (to.matched.some((record) => record.meta.reqrequiresAuth)) {
-//         if (!token) {
-//             next({ name: "login" });
-//         } else {
-//             next();
-//         }
-//     } else {
-//         next();
-//     }
-// });
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem("authToken");
+    if (to.matched.some((record) => record.meta.requireAuth)) {
+        if (!token) {
+            next({ path: "/login" });
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
+});
 
 export default router;
