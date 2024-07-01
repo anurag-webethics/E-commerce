@@ -73,7 +73,7 @@
                             @click="imageDelete(image.image_id)">&#735;</span>
                           <img :src="image.url" alt="" height="70px">
                         </div>
-                          <input type="checkbox" name="check-image" id="check-image" :value="image"
+                        <input type="checkbox" name="check-image" id="check-image" :value="image"
                           :checked="image.is_featured == 1" @change="imageId(image)">
                       </div>
                     </div>

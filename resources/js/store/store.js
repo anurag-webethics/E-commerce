@@ -33,11 +33,10 @@ const store = new Vuex.Store({
                     if (state.is_featured.id == product.id) {
                         product.is_featured = 1;
                     } else {
-                       product.is_featured = 0;
+                        product.is_featured = 0;
                     }
                 });
             }
-            console.log(state.getProductData.productimages);
         },
     },
     actions: {

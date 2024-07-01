@@ -13,7 +13,8 @@
           <AddProductForm @close="closeModal" @data="getAllProduct" :productId="productId" />
         </div>
         <b-row class="w-100">
-          <b-col cols="4" v-for="userProductDetail in filteredProducts" :key="userProductDetail.id" class="w-25 my-3">
+          <b-col cols="4" v-for="(userProductDetail, index) in filteredProducts" :key="userProductDetail.id"
+            class="w-25 my-3">
             <div>
               <div>
                 <b-dropdown id="dropdown-left" text="Actions" variant="primary" class="m-2">
@@ -28,11 +29,12 @@
                   </div>
                 </b-dropdown>
               </div>
-
               <b-card v-bind:title="userProductDetail.title"
-                :img-src="userProductDetail.productimages.length > 0 ? userProductDetail.productimages[0].url : ''"
-                img-alt="Image" img-top tag="article" style="max-width: 20rem;" class="mb-2">
+                :img-src="getFeaturedImage(userProductDetail.productimages).url" img-alt="Image" img-top tag="article"
+                style="max-width: 20rem;" class="mb-2">
                 <!-- :img-src="userProductDetail.productimages.length > 0 ? userProductDetail.productimages[0].url : ''" -->
+                <!-- :img-src="userProductDetail.id == image.id ? productImages : userProductDetail.productimages[0].url" -->
+                <!-- userProductDetail.productimages[0].is_featured == 1 ? images[index].productimages[0].url : userProductDetail.productimages[0].url -->
                 <b-card-text>
                   {{ userProductDetail.description }}
                 </b-card-text>
@@ -40,7 +42,6 @@
             </div>
           </b-col>
         </b-row>
-
       </b-container>
     </div>
   </div>
@@ -97,8 +98,9 @@ export default {
         .catch((error) => {
           console.log(error);
         })
-      // this.userProductDetails = this.$store.actions.getProducts;
-      // console.log(this.userProductDetails);
+    },
+    getFeaturedImage(productimages) {
+      return productimages.find(image => image.is_featured === "1") || productimages[0];
     },
     getDeleteProduct(id) {
       this.$swal.fire({
